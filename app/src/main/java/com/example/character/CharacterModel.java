@@ -35,9 +35,6 @@ public class CharacterModel implements Parcelable, Serializable {
         this.image = image;
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
 
     private CharacterModel(Parcel in) {
         name=in.readString();
@@ -50,6 +47,9 @@ public class CharacterModel implements Parcelable, Serializable {
         gender=in.readString();
         origin=in.readString();
         image=in.readString();
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getImage() {

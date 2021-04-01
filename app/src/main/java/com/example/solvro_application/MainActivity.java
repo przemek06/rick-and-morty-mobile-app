@@ -58,9 +58,10 @@ public class MainActivity extends AppCompatActivity {
         }
         configureBottomBar();
         configureSpinner();
+        findViewById(R.id.listofcharacters).setVisibility(View.INVISIBLE);
     }
     private void configureSpinner(){
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        Spinner spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.status, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -86,6 +87,24 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @Override
+    protected void onResume() {
+        if(!isFavorites) {
+            fetchCharacters();
+        } else{
+            fetchFavorites();
+        }
+        String[] charactersArray = new String[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            charactersArray = filteredCharacters();
+        }
+        ListView listView = findViewById(R.id.listofcharacters);
+        ArrayAdapter<String> adapter= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, charactersArray);
+        listView.setAdapter(adapter);
+        super.onResume();
     }
 
     @Override
@@ -183,6 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 ObjectInputStream inputStream = new ObjectInputStream(openFileInput("favorites.txt"));
                 characters = (ArrayList<CharacterModel>) inputStream.readObject();
                 inputStream.close();
+            } else {
+                characters.clear();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
